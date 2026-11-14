@@ -167,5 +167,6 @@ fsButton.addEventListener('click',async()=>{
   }catch(e){toast('Para ocultar a barra do navegador, adicione o app à Tela de Início')}
 });
 document.addEventListener('fullscreenchange',()=>{fsButton.setAttribute('aria-label',document.fullscreenElement?'Sair da tela cheia':'Tela cheia')});
-\n$('#clock').textContent=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+' ◉';loadSaved();qr();setUpdate();render();if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+
+$('#clock').textContent=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+' ◉';loadSaved();qr();setUpdate();render();if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 </script></body></html>
