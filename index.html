@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="pt-BR"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#f4f5f5"><meta name="description" content="Carteira digital pessoal — imagens armazenadas no próprio dispositivo.">
+<meta name="theme-color" content="#f4f5f5"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="mobile-web-app-capable" content="yes"><meta name="description" content="Carteira digital pessoal — imagens armazenadas no próprio dispositivo.">
 <title>Carteira</title><link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -104,10 +104,27 @@
  .bottom-nav{height:64px;min-height:64px}
  .tabs{height:62px;min-height:62px}
 }
+
+/* Layout de carteira: sem navegação inferior, documento ocupa o espaço central */
+.bottom-nav,.android-nav{display:none!important}
+.phone{min-height:100dvh;height:100dvh}
+.content{padding-bottom:0!important}
+#privacyNote{display:none!important}
+.update{flex:0 0 auto}
+@media (orientation:portrait){
+  .phone{width:100%;max-width:100%;height:100dvh;min-height:100dvh}
+  .content{flex:1;min-height:0;padding:8px 10px 0!important}
+  .card-stage{flex:1 1 auto!important;min-height:0!important;padding:2px 0!important}
+  .upload-card.has-image{width:100%!important;height:100%!important;max-height:100%!important;aspect-ratio:auto!important;transform:none!important}
+  .upload-card img{width:100%!important;height:100%!important;object-fit:contain!important}
+  .update{min-height:44px!important;margin:0 -10px!important;font-size:14px}
+}
+:fullscreen{background:#f4f5f5}
+:fullscreen .phone{width:100vw!important;max-width:none!important;height:100dvh!important;min-height:100dvh!important;border-radius:0!important;box-shadow:none!important}
 </style></head>
 <body><div class="phone">
 <div class="status"><span id="clock">13:32 ◉</span><span class="status-right">⌁ ◉ ▮ <span class="battery">43</span></span></div>
-<header class="topbar"><button class="icon-btn" id="back" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6M9 12h12"/></svg></button><div class="heading">Carteira</div><div class="top-actions"><button class="icon-btn" id="share" aria-label="Compartilhar"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.7 10.7 6.6-4.4M8.7 13.3l6.6 4.4"/></svg></button><button class="icon-btn" id="more" aria-label="Mais opções"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="12" cy="19" r="1" fill="currentColor"/></svg></button></div></header>
+<header class="topbar"><button class="icon-btn" id="back" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6M9 12h12"/></svg></button><div class="heading">Carteira</div><div class="top-actions"><button class="icon-btn" id="share" aria-label="Compartilhar"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.7 10.7 6.6-4.4M8.7 13.3l6.6 4.4"/></svg></button><button class="icon-btn" id="fullscreen" aria-label="Tela cheia" title="Tela cheia"><svg viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M21 16v5h-5M3 16v5h5"/></svg></button><button class="icon-btn" id="more" aria-label="Mais opções"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="12" cy="19" r="1" fill="currentColor"/></svg></button></div></header>
 <div class="tabs" id="tabs"><button class="tab active" data-tab="front">Frente</button><button class="tab" data-tab="back">Verso</button><button class="tab" data-tab="qr">QR Code</button></div>
 <main class="content">
 <section class="card-stage" id="frontView"><label class="upload-card" id="frontCard" for="frontInput"><input type="file" id="frontInput" accept="image/*"><span class="upload-content" id="frontPrompt"><svg viewBox="0 0 24 24"><path d="M12 16V4m-4 4 4-4 4 4M4 16v4h16v-4"/></svg><strong>Adicionar imagem da frente</strong><small>Toque para selecionar uma imagem</small></span><img id="frontImage" alt="Imagem da frente selecionada" hidden><span class="mobile-tools"><button class="tool" type="button" data-action="replace-front">Trocar imagem</button><button class="tool" type="button" data-action="remove-front">Remover</button></span></label></section>
@@ -115,8 +132,8 @@
 <section class="qr-view" id="qrView" hidden><h2>QR Code</h2><div class="qr-box" id="qrBox"></div><p>QR Code demonstrativo</p></section>
 <section class="simple-page" id="servicesView" hidden><svg viewBox="0 0 24 24"><path d="M20 8h-4l-2-3H6L4 8H2v12h18zM2 8h18M7 13h10"/></svg><h2>Serviços</h2><p>Serviços e recursos da carteira aparecerão aqui.</p></section>
 <section class="simple-page" id="optionsView" hidden><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg><h2>Opções</h2><p>Gerencie as imagens armazenadas neste dispositivo.</p><button class="tool" id="clearAll">Remover todas as imagens</button><p class="privacy-note">As imagens ficam somente neste navegador e não são enviadas ao GitHub ou a qualquer servidor.</p></section>
-<div class="update" id="updateText">Última atualização em: —</div><p class="privacy-note" id="privacyNote">Imagens verticais são giradas automaticamente para a posição horizontal. Suas imagens ficam neste dispositivo.</p></main>
-<nav class="bottom-nav"><button class="nav-item active" data-page="wallet"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 9h20M16 13h3"/></svg><span>Carteira</span></button><button class="nav-item" data-page="services"><svg viewBox="0 0 24 24"><path d="M20.5 13.5 13 21l-10-10V3h8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg><span>Serviços</span></button><button class="nav-item" data-page="options"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg><span>Opções</span></button></nav>
+<div class="update" id="updateText">Última atualização em: —</div><p class="privacy-note" id="privacyNote">Suas imagens ficam armazenadas neste dispositivo.</p></main>
+<nav class="bottom-nav" aria-hidden="true"><button class="nav-item active" data-page="wallet"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 9h20M16 13h3"/></svg><span>Carteira</span></button><button class="nav-item" data-page="services"><svg viewBox="0 0 24 24"><path d="M20.5 13.5 13 21l-10-10V3h8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg><span>Serviços</span></button><button class="nav-item" data-page="options"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg><span>Opções</span></button></nav>
 <div class="android-nav"><span class="recent"></span><span class="back"></span></div><div class="toast" id="toast"></div>
 <div class="menu-pop" id="menuPop" hidden><button data-action="refresh">Atualizar carteira</button><button data-action="clear">Remover imagens</button><button data-action="about">Sobre este aplicativo</button></div></div>
 <script>
@@ -139,5 +156,16 @@ $('#back').addEventListener('click',()=>{if(page!=='wallet')page='wallet';else i
 $('#clearAll').addEventListener('click',()=>{state.front=null;state.back=null;draw('front');draw('back');persist();toast('Todas as imagens foram removidas')});
 $('#share').addEventListener('click',async()=>{const data={title:'Carteira pessoal',text:'Visualizador pessoal de imagens de documentos.'};try{if(navigator.share)await navigator.share(data);else{await navigator.clipboard.writeText(location.href);toast('Link copiado')}}catch(e){if(e.name!=='AbortError')toast('Compartilhamento indisponível')}});
 function qr(){let s='<svg viewBox="0 0 29 29" role="img" aria-label="QR Code ilustrativo"><rect width="29" height="29" fill="#fff"/>';const cell=(x,y)=>{s+='<rect x="'+x+'" y="'+y+'" width="1" height="1" fill="#172d20"/>'};const finder=(x,y)=>{for(let a=0;a<7;a++)for(let b=0;b<7;b++)if(a===0||a===6||b===0||b===6||(a>=2&&a<=4&&b>=2&&b<=4))cell(x+a,y+b)};finder(1,1);finder(21,1);finder(1,21);for(let y=0;y<29;y++)for(let x=0;x<29;x++){const reserved=(x<9&&y<9)||(x>19&&y<9)||(x<9&&y>19);if(!reserved&&((x*13+y*7+x*y)%11<5))cell(x,y)}s+='</svg>';$('#qrBox').innerHTML=s}
-$('#clock').textContent=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+' ◉';loadSaved();qr();setUpdate();render();if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+
+const fsButton=$('#fullscreen');
+fsButton.addEventListener('click',async()=>{
+  try{
+    if(document.fullscreenElement){await document.exitFullscreen();return}
+    if(document.documentElement.requestFullscreen){await document.documentElement.requestFullscreen();toast('Modo de tela cheia ativado')}
+    else if(window.navigator.standalone){toast('O aplicativo já está em modo de tela cheia')}
+    else{toast('No iPhone: Compartilhar → Adicionar à Tela de Início para ocultar a barra do Safari')}
+  }catch(e){toast('Para ocultar a barra do navegador, adicione o app à Tela de Início')}
+});
+document.addEventListener('fullscreenchange',()=>{fsButton.setAttribute('aria-label',document.fullscreenElement?'Sair da tela cheia':'Tela cheia')});
+\n$('#clock').textContent=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+' ◉';loadSaved();qr();setUpdate();render();if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 </script></body></html>
