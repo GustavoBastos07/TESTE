@@ -105,19 +105,34 @@
  .tabs{height:62px;min-height:62px}
 }
 
-/* Layout de carteira: sem navegação inferior, documento ocupa o espaço central */
-.bottom-nav,.android-nav{display:none!important}
+/* Navegação inferior padrão: Carteira, Serviços e Opções */
+.bottom-nav{
+  display:grid!important;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  flex:0 0 calc(76px + env(safe-area-inset-bottom));
+  height:calc(76px + env(safe-area-inset-bottom));
+  min-height:76px;
+  padding-bottom:env(safe-area-inset-bottom);
+  background:#f4f5f5;
+  border-top:1px solid #dce0df;
+  z-index:4;
+}
+.android-nav{display:none!important}
+.nav-item{min-width:0;justify-content:center;gap:4px;font-size:12px}
+.nav-item svg{width:23px;height:23px}
 .phone{min-height:100dvh;height:100dvh}
 .content{padding-bottom:0!important}
 #privacyNote{display:none!important}
 .update{flex:0 0 auto}
 @media (orientation:portrait){
   .phone{width:100%;max-width:100%;height:100dvh;min-height:100dvh}
-  .content{flex:1;min-height:0;padding:8px 10px 0!important}
+  .content{flex:1 1 auto;min-height:0;padding:8px 10px 0!important}
+  .bottom-nav{display:grid!important;flex-shrink:0}
   .card-stage{flex:1 1 auto!important;min-height:0!important;padding:2px 0!important}
   .upload-card.has-image{width:100%!important;height:100%!important;max-height:100%!important;aspect-ratio:auto!important;transform:none!important}
   .upload-card img{width:100%!important;height:100%!important;object-fit:contain!important}
   .update{min-height:44px!important;margin:0 -10px!important;font-size:14px}
+  .nav-item{padding:7px 0 4px}
 }
 :fullscreen{background:#f4f5f5}
 :fullscreen .phone{width:100vw!important;max-width:none!important;height:100dvh!important;min-height:100dvh!important;border-radius:0!important;box-shadow:none!important}
@@ -140,7 +155,7 @@
 <section class="simple-page" id="servicesView" hidden><svg viewBox="0 0 24 24"><path d="M20 8h-4l-2-3H6L4 8H2v12h18zM2 8h18M7 13h10"/></svg><h2>Serviços</h2><p>Serviços e recursos da carteira aparecerão aqui.</p></section>
 <section class="simple-page" id="optionsView" hidden><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg><h2>Opções</h2><p>Gerencie as imagens armazenadas neste dispositivo.</p><button class="tool" id="clearAll">Remover todas as imagens</button><p class="privacy-note">As imagens ficam somente neste navegador e não são enviadas ao GitHub ou a qualquer servidor.</p></section>
 <div class="update" id="updateText">Última atualização em: —</div><p class="privacy-note" id="privacyNote">Suas imagens ficam armazenadas neste dispositivo.</p></main>
-<nav class="bottom-nav" aria-hidden="true"><button class="nav-item active" data-page="wallet"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 9h20M16 13h3"/></svg><span>Carteira</span></button><button class="nav-item" data-page="services"><svg viewBox="0 0 24 24"><path d="M20.5 13.5 13 21l-10-10V3h8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg><span>Serviços</span></button><button class="nav-item" data-page="options"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg><span>Opções</span></button></nav>
+<nav class="bottom-nav" aria-label="Navegação principal"><button class="nav-item active" data-page="wallet"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 9h20M16 13h3"/></svg><span>Carteira</span></button><button class="nav-item" data-page="services"><svg viewBox="0 0 24 24"><path d="M20.5 13.5 13 21l-10-10V3h8z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg><span>Serviços</span></button><button class="nav-item" data-page="options"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg><span>Opções</span></button></nav>
 <div class="android-nav"><span class="recent"></span><span class="back"></span></div><div class="toast" id="toast"></div>
 <div class="menu-pop" id="menuPop" hidden><button id="menuUpload" data-action="upload-current">Adicionar imagem</button><button id="menuReplace" data-action="upload-current">Trocar imagem</button><button id="menuRemove" data-action="remove-current">Remover imagem</button><div class="menu-separator"></div><button data-action="refresh">Atualizar carteira</button><button data-action="about">Sobre este aplicativo</button></div></div>
 <script>
