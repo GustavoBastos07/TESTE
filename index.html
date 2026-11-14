@@ -74,6 +74,36 @@
   .phone{max-width:900px}
   .upload-card{transform:none!important;max-width:min(100%,620px)!important}
 }
+
+/* Visualização em tela vertical: preservar exatamente a orientação da foto enviada */
+@media (orientation:portrait){
+  html,body{min-height:100%;overflow-x:hidden}
+  body{display:flex;justify-content:center;background:#111}
+  .phone{width:100%;max-width:430px;min-height:100dvh;height:100dvh;display:flex;flex-direction:column;overflow:hidden;border-radius:0}
+  .status{display:flex}
+  .topbar{height:66px;min-height:66px;display:flex;flex-direction:row;padding:0 18px;gap:24px;border:0}
+  .topbar .heading{font-size:25px;flex:1}
+  .topbar .top-actions{display:flex}
+  .tabs{height:76px;min-height:76px;display:grid!important;grid-template-columns:repeat(3,1fr);flex-direction:row;margin:0;border-bottom:1px solid #d9dddd}
+  .tab{width:auto;min-height:0;border:0;border-bottom:3px solid transparent;font-size:17px}
+  .tab.active{border-bottom-color:#52665b;border-right-color:transparent}
+  .content{flex:1;min-height:0;height:auto;display:flex;flex-direction:column;padding:10px 12px 0!important;justify-content:initial}
+  .card-stage{flex:1 1 0!important;width:100%;min-height:0!important;padding:8px 0!important;overflow:hidden;display:flex;align-items:center;justify-content:center}
+  .upload-card{width:100%!important;max-width:100%!important;height:auto!important;aspect-ratio:1.58!important;transform:none!important;margin:auto;padding:0!important}
+  .upload-card.has-image{width:100%!important;height:100%!important;max-height:100%!important;aspect-ratio:auto!important;display:flex;align-items:center;justify-content:center;background:transparent!important}
+  .upload-card img{position:static!important;display:block!important;width:100%!important;height:100%!important;max-width:100%!important;max-height:100%!important;object-fit:contain!important;transform:none!important}
+  .upload-card.has-image .mobile-tools{position:absolute!important;bottom:8px!important;left:0;right:0;z-index:4}
+  .qr-view{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .qr-box{width:min(52vw,220px);height:min(52vw,220px)}
+  .update{min-height:40px!important;margin:0 -12px!important}
+  .bottom-nav{display:grid!important;height:76px;min-height:76px}
+  .android-nav{display:flex!important}
+}
+@media (orientation:portrait) and (max-height:740px){
+ .card-stage{padding:4px 0!important}
+ .bottom-nav{height:64px;min-height:64px}
+ .tabs{height:62px;min-height:62px}
+}
 </style></head>
 <body><div class="phone">
 <div class="status"><span id="clock">13:32 ◉</span><span class="status-right">⌁ ◉ ▮ <span class="battery">43</span></span></div>
@@ -96,13 +126,13 @@ function stamp(){const d=new Date();return d.toLocaleString('pt-BR',{day:'2-digi
 function setUpdate(){const value=stamp();$('#updateText').textContent='Última atualização em: '+value}
 function draw(k){const a=assets[k],has=!!state[k];a.image.hidden=!has;a.prompt.hidden=has;a.card.classList.toggle('has-image',has);a.image.src=state[k]||''}
 function persist(){try{localStorage.setItem(db,JSON.stringify(state))}catch(e){toast('Imagem muito grande para armazenamento local. Ela ficará disponível até fechar esta aba.')}setUpdate()}
-function normalizeImage(dataUrl){return new Promise((resolve)=>{const img=new Image();img.onload=()=>{if(img.height<=img.width){resolve(dataUrl);return}const canvas=document.createElement('canvas');canvas.width=img.height;canvas.height=img.width;const ctx=canvas.getContext('2d');ctx.translate(canvas.width/2,canvas.height/2);ctx.rotate(-Math.PI/2);ctx.drawImage(img,-img.width/2,-img.height/2);resolve(canvas.toDataURL('image/jpeg',0.94))};img.onerror=()=>resolve(dataUrl);img.src=dataUrl})}
-async function loadSaved(){try{const v=JSON.parse(localStorage.getItem(db)||'{}');state.front=typeof v.front==='string'?v.front:null;state.back=typeof v.back==='string'?v.back:null}catch(e){}for(const k of ['front','back']){if(state[k]){const normalized=await normalizeImage(state[k]);if(normalized!==state[k])state[k]=normalized}draw(k)}try{localStorage.setItem(db,JSON.stringify(state))}catch(e){} }
+function normalizeImage(dataUrl){return Promise.resolve(dataUrl)}
+function loadSaved(){try{const v=JSON.parse(localStorage.getItem(db)||'{}');state.front=typeof v.front==='string'?v.front:null;state.back=typeof v.back==='string'?v.back:null}catch(e){}draw('front');draw('back')}
 function render(){const on=page==='wallet';$('#tabs').hidden=!on;$('#updateText').hidden=!on;$('#privacyNote').hidden=!on;$('#frontView').hidden=!on||tab!=='front';$('#backView').hidden=!on||tab!=='back';$('#qrView').hidden=!on||tab!=='qr';$('#servicesView').hidden=page!=='services';$('#optionsView').hidden=page!=='options';document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));document.querySelectorAll('.nav-item').forEach(b=>b.classList.toggle('active',b.dataset.page===page))}
 function selectTab(t){page='wallet';tab=t;render()}
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>selectTab(b.dataset.tab)));
 document.querySelectorAll('.nav-item').forEach(b=>b.addEventListener('click',()=>{page=b.dataset.page;render()}));
-Object.entries(assets).forEach(([k,a])=>a.input.addEventListener('change',()=>{const file=a.input.files?.[0];if(!file)return;if(!file.type.startsWith('image/')){toast('Selecione um arquivo de imagem.');return}if(file.size>12*1024*1024){toast('Escolha uma imagem de até 12 MB.');a.input.value='';return}const reader=new FileReader();reader.onload=async()=>{state[k]=await normalizeImage(reader.result);draw(k);persist();toast(k==='front'?'Imagem da frente adicionada':'Imagem do verso adicionada')};reader.onerror=()=>toast('Não foi possível abrir essa imagem.');reader.readAsDataURL(file);a.input.value=''}));
+Object.entries(assets).forEach(([k,a])=>a.input.addEventListener('change',()=>{const file=a.input.files?.[0];if(!file)return;if(!file.type.startsWith('image/')){toast('Selecione um arquivo de imagem.');return}if(file.size>12*1024*1024){toast('Escolha uma imagem de até 12 MB.');a.input.value='';return}const reader=new FileReader();reader.onload=async()=>{state[k]=reader.result;draw(k);persist();toast(k==='front'?'Imagem da frente adicionada':'Imagem do verso adicionada')};reader.onerror=()=>toast('Não foi possível abrir essa imagem.');reader.readAsDataURL(file);a.input.value=''}));
 document.addEventListener('click',e=>{const b=e.target.closest('[data-action]');if(!b)return;const action=b.dataset.action;if(action==='replace-front'||action==='replace-back'){e.preventDefault();$(action==='replace-front'?'#frontInput':'#backInput').click()}else if(action==='remove-front'||action==='remove-back'){e.preventDefault();const k=action.endsWith('front')?'front':'back';state[k]=null;draw(k);persist();toast('Imagem removida')}else if(action==='clear'){state.front=null;state.back=null;draw('front');draw('back');persist();$('#menuPop').hidden=true;toast('Imagens removidas')}else if(action==='refresh'){setUpdate();$('#menuPop').hidden=true;toast('Carteira atualizada')}else if(action==='about'){$('#menuPop').hidden=true;toast('Visualizador pessoal — imagens locais, sem envio a servidores')}});
 $('#more').addEventListener('click',()=>$('#menuPop').hidden=!$('#menuPop').hidden);
 $('#back').addEventListener('click',()=>{if(page!=='wallet')page='wallet';else if(tab!=='front')tab='front';else toast('Você está na tela inicial');render()});
