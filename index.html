@@ -144,6 +144,41 @@
 .menu-pop button{width:100%;display:block;border:0;border-radius:6px;background:#fff;text-align:left;padding:12px 13px;color:#28342d;font-size:14px;cursor:pointer}
 .menu-pop button:active{background:#f0f3f0}
 .menu-separator{height:1px;background:#e7eae8;margin:5px 8px}
+
+/* QR Code screen follows the supplied reference composition */
+.qr-view{
+  flex:1 1 auto!important;min-height:0!important;width:100%;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  gap:14px;padding:10px 8px 12px;overflow:auto;text-align:center;
+}
+.qr-card{
+  width:100%;max-width:620px;flex:1 1 auto;min-height:300px;
+  background:#fff;border-radius:18px;padding:22px 18px 18px;
+  display:flex;flex-direction:column;align-items:center;justify-content:space-around;
+  box-shadow:0 1px 5px #00000008;
+}
+.qr-box{
+  width:clamp(220px, min(72vw, 42vh), 410px)!important;
+  height:auto!important;aspect-ratio:1;background:#fff;padding:0!important;
+  display:grid;place-items:center;box-shadow:none!important;flex:0 1 auto;
+}
+.qr-box svg{width:100%;height:100%;display:block;shape-rendering:crispEdges}
+.qr-timer{width:100%;max-width:410px;display:flex;flex-direction:column;align-items:center;gap:16px;color:#24292a;font-size:15px}
+.qr-progress{height:5px;width:100%;background:#e1e0e8;border-radius:0;overflow:hidden}
+.qr-progress span{display:block;width:100%;height:100%;background:#315b43;transition:width .9s linear}
+.qr-info{
+  width:100%;max-width:620px;min-height:76px;border:1.5px solid #6678b8;
+  border-radius:13px;padding:12px 16px;display:flex;align-items:center;gap:14px;
+  color:#3e4d77;text-align:left;font-size:14px;line-height:1.35;background:transparent;
+}
+.qr-info svg{width:28px;height:28px;flex:0 0 28px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+@media(max-height:760px){
+ .qr-view{gap:8px;padding:6px 6px}
+ .qr-card{min-height:250px;padding:14px 12px}
+ .qr-box{width:clamp(190px,min(64vw,34vh),340px)!important}
+ .qr-timer{gap:9px}
+ .qr-info{min-height:62px;padding:8px 12px;font-size:12px}
+}
 </style></head>
 <body><div class="phone">
 <header class="topbar"><button class="icon-btn" id="back" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="m15 18-6-6 6-6M9 12h12"/></svg></button><div class="heading">Carteira</div><div class="top-actions"><button class="icon-btn" id="share" aria-label="Compartilhar"><svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.7 10.7 6.6-4.4M8.7 13.3l6.6 4.4"/></svg></button><button class="icon-btn" id="more" aria-label="Mais opções"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1" fill="currentColor"/><circle cx="12" cy="12" r="1" fill="currentColor"/><circle cx="12" cy="19" r="1" fill="currentColor"/></svg></button></div></header>
@@ -151,7 +186,19 @@
 <main class="content">
 <section class="card-stage" id="frontView"><div class="upload-card" id="frontCard"><input type="file" id="frontInput" accept="image/*"><span class="upload-content" id="frontPrompt"><svg viewBox="0 0 24 24"><path d="M12 16V4m-4 4 4-4 4 4M4 16v4h16v-4"/></svg><strong>Nenhuma imagem adicionada</strong><small>Use o menu de opções para adicionar a frente</small></span><img id="frontImage" alt="Imagem da frente selecionada" hidden><span class="mobile-tools"><button class="tool" type="button" data-action="replace-front">Trocar imagem</button><button class="tool" type="button" data-action="remove-front">Remover</button></span></div></section>
 <section class="card-stage" id="backView" hidden><div class="upload-card" id="backCard"><input type="file" id="backInput" accept="image/*"><span class="upload-content" id="backPrompt"><svg viewBox="0 0 24 24"><path d="M12 16V4m-4 4 4-4 4 4M4 16v4h16v-4"/></svg><strong>Nenhuma imagem adicionada</strong><small>Use o menu de opções para adicionar o verso</small></span><img id="backImage" alt="Imagem do verso selecionada" hidden><span class="mobile-tools"><button class="tool" type="button" data-action="replace-back">Trocar imagem</button><button class="tool" type="button" data-action="remove-back">Remover</button></span></div></section>
-<section class="qr-view" id="qrView" hidden><h2>QR Code</h2><div class="qr-box" id="qrBox"></div><p>QR Code demonstrativo</p></section>
+<section class="qr-view" id="qrView" hidden>
+  <div class="qr-card">
+    <div class="qr-box" id="qrBox" aria-label="QR Code fictício de demonstração"></div>
+    <div class="qr-timer">
+      <div class="qr-progress"><span id="qrProgress"></span></div>
+      <span id="qrCountdown">00 : 60</span>
+    </div>
+  </div>
+  <div class="qr-info">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 22h4M8.2 14.5A7 7 0 1 1 15.8 14.5c-.9.7-1.3 1.5-1.5 2.5H9.7c-.2-1-.6-1.8-1.5-2.5Z"/></svg>
+    <span>Este QR Code é fictício e serve apenas para demonstração visual. Não valida identidade nem dados reais.</span>
+  </div>
+</section>
 <section class="simple-page" id="servicesView" hidden><svg viewBox="0 0 24 24"><path d="M20 8h-4l-2-3H6L4 8H2v12h18zM2 8h18M7 13h10"/></svg><h2>Serviços</h2><p>Serviços e recursos da carteira aparecerão aqui.</p></section>
 <section class="simple-page" id="optionsView" hidden><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg><h2>Opções</h2><p>Gerencie as imagens armazenadas neste dispositivo.</p><button class="tool" id="clearAll">Remover todas as imagens</button><p class="privacy-note">As imagens ficam somente neste navegador e não são enviadas ao GitHub ou a qualquer servidor.</p></section>
 <div class="update" id="updateText">Última atualização em: —</div><p class="privacy-note" id="privacyNote">Suas imagens ficam armazenadas neste dispositivo.</p></main>
@@ -178,7 +225,11 @@ $('#more').addEventListener('click',()=>{updateImageMenu();$('#menuPop').hidden=
 $('#back').addEventListener('click',()=>{if(page!=='wallet')page='wallet';else if(tab!=='front')tab='front';else toast('Você está na tela inicial');render()});
 $('#clearAll').addEventListener('click',()=>{state.front=null;state.back=null;draw('front');draw('back');persist();toast('Todas as imagens foram removidas')});
 $('#share').addEventListener('click',async()=>{const data={title:'Carteira pessoal',text:'Visualizador pessoal de imagens de documentos.'};try{if(navigator.share)await navigator.share(data);else{await navigator.clipboard.writeText(location.href);toast('Link copiado')}}catch(e){if(e.name!=='AbortError')toast('Compartilhamento indisponível')}});
-function qr(){let s='<svg viewBox="0 0 29 29" role="img" aria-label="QR Code ilustrativo"><rect width="29" height="29" fill="#fff"/>';const cell=(x,y)=>{s+='<rect x="'+x+'" y="'+y+'" width="1" height="1" fill="#172d20"/>'};const finder=(x,y)=>{for(let a=0;a<7;a++)for(let b=0;b<7;b++)if(a===0||a===6||b===0||b===6||(a>=2&&a<=4&&b>=2&&b<=4))cell(x+a,y+b)};finder(1,1);finder(21,1);finder(1,21);for(let y=0;y<29;y++)for(let x=0;x<29;x++){const reserved=(x<9&&y<9)||(x>19&&y<9)||(x<9&&y>19);if(!reserved&&((x*13+y*7+x*y)%11<5))cell(x,y)}s+='</svg>';$('#qrBox').innerHTML=s}
+let qrSeed=0;
+function qr(){const n=41;let s='<svg viewBox="0 0 '+n+' '+n+'" role="img" aria-label="QR Code fictício, não funcional"><rect width="'+n+'" height="'+n+'" fill="#fff"/>';const cell=(x,y)=>{s+='<rect x="'+x+'" y="'+y+'" width="1" height="1" fill="#111"/>'};const finder=(x,y)=>{for(let a=0;a<7;a++)for(let b=0;b<7;b++)if(a===0||a===6||b===0||b===6||(a>=2&&a<=4&&b>=2&&b<=4))cell(x+a,y+b)};finder(1,1);finder(n-8,1);finder(1,n-8);for(let k=8;k<n-8;k++){if(k%2===0){cell(k,7);cell(7,k)}}for(let y=0;y<n;y++)for(let x=0;x<n;x++){const reserved=(x<9&&y<9)||(x>n-10&&y<9)||(x<9&&y>n-10)||(x===7&&y>7&&y<n-8)||(y===7&&x>7&&x<n-8);if(!reserved&&((x*17+y*29+x*y*3+qrSeed*11)%13<6))cell(x,y)}s+='</svg>';$('#qrBox').innerHTML=s}
+let qrRemaining=60;
+function updateQrTimer(){qrRemaining--;if(qrRemaining<=0){qrRemaining=60;qrSeed++;qr()}const mm=String(Math.floor(qrRemaining/60)).padStart(2,'0');const ss=String(qrRemaining%60).padStart(2,'0');$('#qrCountdown').textContent=mm+' : '+ss;$('#qrProgress').style.width=((qrRemaining/60)*100)+'%'}
 
-loadSaved();qr();setUpdate();render();updateImageMenu();if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+
+loadSaved();qr();setInterval(updateQrTimer,1000);setUpdate();render();updateImageMenu();if('serviceWorker'in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 </script></body></html>
